@@ -7,11 +7,11 @@ it.each(
     [
       "case A",
       {
-        mwExcessComponent: math.unit(150, 'kg/mol'),
-        mwLimitingComponent: math.unit(50, 'kg/mol'),
+        mwExcessComponent: math.unit(50, 'kg/mol'),
+        mwLimitingComponent: math.unit(150, 'kg/mol'),
         KD: math.unit(10, 'nmol/L'),
         foldExcess: 1,
-        multipleTotalConcWV: [math.unit(0.05, 'mg/mL')],
+        multipleTotalConcWV: [0.05, 0.04, 0.01, 0.004].map((c) => math.unit(c, 'mg/mL')),
       },
       [
         {
@@ -19,7 +19,25 @@ it.each(
           percentParticlesAB: 69.3,
           percentParticlesA: 15.3,
           percentParticlesB: 15.3,
-        }
+        },
+        {
+          percentPossibleAB: 80,
+          percentParticlesAB: 66.7,
+          percentParticlesA: 16.7,
+          percentParticlesB: 16.7,
+        },
+        {
+          percentPossibleAB: 64.2,
+          percentParticlesAB: 47.2,
+          percentParticlesA: 26.4,
+          percentParticlesB: 26.4,
+        },
+        {
+          percentPossibleAB: 50.0,
+          percentParticlesAB: 33.3,
+          percentParticlesA: 33.3,
+          percentParticlesB: 33.3,
+        },
       ]
     ]
   ]
@@ -39,8 +57,8 @@ it.each(
     [
       "case A",
       {
-        mwExcessComponent: math.unit(150, 'kg/mol'),
-        mwLimitingComponent: math.unit(50, 'kg/mol'),
+        mwExcessComponent: math.unit(50, 'kg/mol'),
+        mwLimitingComponent: math.unit(150, 'kg/mol'),
         KD: math.unit(10, 'nmol/L'),
         foldExcess: 1,
         totalConcWV: math.unit(0.05, 'mg/mL'),
@@ -50,6 +68,38 @@ it.each(
         percentParticlesAB: 69.3,
         percentParticlesA: 15.3,
         percentParticlesB: 15.3,
+      }
+    ],
+    [
+      "case B",
+      {
+        mwExcessComponent: math.unit(50, 'kg/mol'),
+        mwLimitingComponent: math.unit(150, 'kg/mol'),
+        KD: math.unit(10, 'nmol/L'),
+        foldExcess: 2,
+        totalConcWV: math.unit(0.05, 'mg/mL'),
+      },
+      {
+        percentPossibleAB: 95.4,
+        percentParticlesAB: 46.7,
+        percentParticlesA: 2.2,
+        percentParticlesB: 51.1,
+      }
+    ],
+    [
+      "case C",
+      {
+        mwExcessComponent: math.unit(500, 'g/mol'),
+        mwLimitingComponent: math.unit(150, 'kg/mol'),
+        KD: math.unit(10, 'nmol/L'),
+        foldExcess: 11,
+        totalConcWV: math.unit(0.05, 'mg/mL'),
+      },
+      {
+        percentPossibleAB: 99.7,
+        percentParticlesAB: 9.1,
+        percentParticlesA: 0,
+        percentParticlesB: 90.9,
       }
     ]
   ]
@@ -61,27 +111,9 @@ it.each(
   expect(rv.percentParticlesB).toBeCloseTo(expected.percentParticlesB, 1)
 })
 
-it('computes with units here', () => {
-  const inputs = {
-    mwExcessComponent: math.unit(200, 'kg/mol'),
-    mwLimitingComponent: math.unit(100, 'kg/mol'),
-    KD: math.unit(1, 'nmol/L'),
-    foldExcess: 1,
-    totalConcWV: math.unit(100, 'mg/mL'),
-  }
-  const i1: Unit = math.multiply(inputs.foldExcess, inputs.totalConcWV)
-  const i2: Unit = math.multiply(i1, inputs.mwExcessComponent)
-  const i3: Unit = math.multiply(inputs.foldExcess, inputs.mwExcessComponent)
-  const i4: Unit = math.add(inputs.mwLimitingComponent, i3)
-  const concExcessComponentWV: Unit = math.divide(i2, i4)
-  const concLimitingComponentWV: Unit = math.subtract(inputs.totalConcWV, concExcessComponentWV)
-  expect(concExcessComponentWV.toNumber('mg/mL')).toBeCloseTo(66.67, 2)
-  expect(concLimitingComponentWV.toNumber('mg/mL')).toBeCloseTo(33.33, 2)
-})
-
 it('works', () => {
   const a = math.unit('0.1 m')
   const b = math.unit(45, 'cm')
-  const c = math.add(a, b)
+  const c = math.add(a, b) as math.Unit
   expect(c.toNumber('mm')).toEqual(550)
 })

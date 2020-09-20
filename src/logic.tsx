@@ -54,7 +54,7 @@ export function computeSingleEquilibrium(
   ) as math.Unit
   const concABInitialMolar: math.Unit = math.divide(concLimitingComponentWV, mwLimitingComponent)
   const concExcessInitialMolar: math.Unit = math.subtract(
-    math.divide(concLimitingComponentWV, mwLimitingComponent),
+    math.divide(concExcessComponentWV, mwExcessComponent),
     concABInitialMolar,
   ) as math.Unit
 
@@ -73,18 +73,18 @@ export function computeSingleEquilibrium(
 
   const concBFinalMolar: math.Unit = math.add(concExcessInitialMolar, concAFinalMolar) as math.Unit
 
-  const percentPossibleAB: number = math.divide(concABFinalMolar, concABInitialMolar) as unknown as number
+  const fractionPossibleAB: number = math.divide(concABFinalMolar, concABInitialMolar) as unknown as number
 
   const concAllParticles: math.Unit = math
     .chain(concABFinalMolar).add(concAFinalMolar).add(concBFinalMolar).done()
-  const percentParticlesAB: number = math.divide(concABFinalMolar, concAllParticles) as unknown as number
-  const percentParticlesA: number = math.divide(concAFinalMolar, concAllParticles) as unknown as number
-  const percentParticlesB: number = math.divide(concBFinalMolar, concAllParticles) as unknown as number
+  const fractionParticlesAB: number = math.divide(concABFinalMolar, concAllParticles) as unknown as number
+  const fractionParticlesA: number = math.divide(concAFinalMolar, concAllParticles) as unknown as number
+  const fractionParticlesB: number = math.divide(concBFinalMolar, concAllParticles) as unknown as number
 
   return {
-    percentPossibleAB: percentPossibleAB * 100,
-    percentParticlesAB: percentParticlesAB * 100,
-    percentParticlesA: percentParticlesA * 100,
-    percentParticlesB: percentParticlesB * 100,
+    percentPossibleAB: fractionPossibleAB * 100,
+    percentParticlesAB: fractionParticlesAB * 100,
+    percentParticlesA: fractionParticlesA * 100,
+    percentParticlesB: fractionParticlesB * 100,
   }
 }
