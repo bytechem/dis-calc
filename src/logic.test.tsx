@@ -16,26 +16,26 @@ it.each([
       {
         percentPossibleAB: 81.9,
         percentParticlesAB: 69.3,
-        percentParticlesA: 15.3,
-        percentParticlesB: 15.3,
+        percentParticlesLimiting: 15.3,
+        percentParticlesExcess: 15.3,
       },
       {
         percentPossibleAB: 80,
         percentParticlesAB: 66.7,
-        percentParticlesA: 16.7,
-        percentParticlesB: 16.7,
+        percentParticlesLimiting: 16.7,
+        percentParticlesExcess: 16.7,
       },
       {
         percentPossibleAB: 64.2,
         percentParticlesAB: 47.2,
-        percentParticlesA: 26.4,
-        percentParticlesB: 26.4,
+        percentParticlesLimiting: 26.4,
+        percentParticlesExcess: 26.4,
       },
       {
         percentPossibleAB: 50.0,
         percentParticlesAB: 33.3,
-        percentParticlesA: 33.3,
-        percentParticlesB: 33.3,
+        percentParticlesLimiting: 33.3,
+        percentParticlesExcess: 33.3,
       },
     ],
   ],
@@ -45,8 +45,8 @@ it.each([
   for (const [rv, expectedSingle] of zip(rvs, expected)) {
     expect(rv!.percentPossibleAB).toBeCloseTo(expectedSingle!.percentPossibleAB, 1)
     expect(rv!.percentParticlesAB).toBeCloseTo(expectedSingle!.percentParticlesAB, 1)
-    expect(rv!.percentParticlesA).toBeCloseTo(expectedSingle!.percentParticlesA, 1)
-    expect(rv!.percentParticlesB).toBeCloseTo(expectedSingle!.percentParticlesB, 1)
+    expect(rv!.percentParticlesLimiting).toBeCloseTo(expectedSingle!.percentParticlesLimiting, 1)
+    expect(rv!.percentParticlesExcess).toBeCloseTo(expectedSingle!.percentParticlesExcess, 1)
   }
 })
 
@@ -63,8 +63,8 @@ it.each([
     {
       percentPossibleAB: 81.9,
       percentParticlesAB: 69.3,
-      percentParticlesA: 15.3,
-      percentParticlesB: 15.3,
+      percentParticlesLimiting: 15.3,
+      percentParticlesExcess: 15.3,
     },
   ],
   [
@@ -79,8 +79,8 @@ it.each([
     {
       percentPossibleAB: 95.4,
       percentParticlesAB: 46.7,
-      percentParticlesA: 2.2,
-      percentParticlesB: 51.1,
+      percentParticlesLimiting: 2.2,
+      percentParticlesExcess: 51.1,
     },
   ],
   [
@@ -95,16 +95,16 @@ it.each([
     {
       percentPossibleAB: 99.7,
       percentParticlesAB: 9.1,
-      percentParticlesA: 0,
-      percentParticlesB: 90.9,
+      percentParticlesLimiting: 0,
+      percentParticlesExcess: 90.9,
     },
   ],
 ])("computes single equlibrium for %s", (name, input, expected) => {
   const rv = computeSingleEquilibrium(input)
   expect(rv.percentPossibleAB).toBeCloseTo(expected.percentPossibleAB, 1)
   expect(rv.percentParticlesAB).toBeCloseTo(expected.percentParticlesAB, 1)
-  expect(rv.percentParticlesA).toBeCloseTo(expected.percentParticlesA, 1)
-  expect(rv.percentParticlesB).toBeCloseTo(expected.percentParticlesB, 1)
+  expect(rv.percentParticlesLimiting).toBeCloseTo(expected.percentParticlesLimiting, 1)
+  expect(rv.percentParticlesExcess).toBeCloseTo(expected.percentParticlesExcess, 1)
 })
 
 it("works", () => {

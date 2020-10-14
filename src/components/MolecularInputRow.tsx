@@ -5,6 +5,8 @@ import InputGroup from "react-bootstrap/InputGroup"
 import Form from "react-bootstrap/Form"
 import Col from "react-bootstrap/Col"
 
+import "./InputRow.css"
+
 interface MolecularInputRowProps extends FormControlProps {
   title: React.ReactNode
   unitOptions: string[]
@@ -37,11 +39,12 @@ const MolecularInputRow: FC<MolecularInputRowProps> = ({
         <InputGroup>
           <Form.Control
             {...props}
-            className="text-right"
+            className="value text-right"
             onChange={({target: {value}}) => onValueChange(value)}
           />
           <Form.Control
             as="select"
+            className="unit"
             style={{width: "fit-content"}}
             value={selectedUnitIndex}
             onChange={({target: {value}}) => onUnitChange(parseInt(value))}

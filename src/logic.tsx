@@ -19,38 +19,32 @@ interface IInputParams {
 interface IOutput {
   percentPossibleAB: number
   percentParticlesAB: number
-  percentParticlesA: number
-  percentParticlesB: number
+  percentParticlesLimiting: number
+  percentParticlesExcess: number
 }
 
-export function computeEquilibrium(
-  { multipleTotalConcWV, ...addtl }: IInputParams
-): IOutput[] {
-  return multipleTotalConcWV.map((singleTotalConcWV) => (
-    computeSingleEquilibrium({ ...addtl, totalConcWV: singleTotalConcWV })
-  ))
+export function computeEquilibrium({multipleTotalConcWV, ...addtl}: IInputParams): IOutput[] {
+  return multipleTotalConcWV.map((singleTotalConcWV) =>
+    computeSingleEquilibrium({...addtl, totalConcWV: singleTotalConcWV}),
+  )
 }
 
-export function computeSingleEquilibrium(
-  {
-    mwExcessComponent,
-    mwLimitingComponent,
-    KD,
-    foldExcess,
-    totalConcWV,
-  }: IInputParamsSingle): IOutput {
+export function computeSingleEquilibrium({
+  mwExcessComponent,
+  mwLimitingComponent,
+  KD,
+  foldExcess,
+  totalConcWV,
+}: IInputParamsSingle): IOutput {
   const concExcessComponentWV: math.Unit = math
     .chain(foldExcess)
     .multiply(totalConcWV)
     .multiply(mwExcessComponent)
-    .divide(
-      math.add(
-        mwLimitingComponent,
-        math.multiply(foldExcess, mwExcessComponent),
-      ),
-    ).done()
+    .divide(math.add(mwLimitingComponent, math.multiply(foldExcess, mwExcessComponent)))
+    .done()
   const concLimitingComponentWV: math.Unit = math.subtract(
-    totalConcWV, concExcessComponentWV
+    totalConcWV,
+    concExcessComponentWV,
   ) as math.Unit
   const concABInitialMolar: math.Unit = math.divide(concLimitingComponentWV, mwLimitingComponent)
   const concExcessInitialMolar: math.Unit = math.subtract(
@@ -67,24 +61,45 @@ export function computeSingleEquilibrium(
   const numer: math.Unit = math.add(math.unaryMinus(b), math.sqrt(square)) as math.Unit
   const denom = math.multiply(2, a)
 
-  const concAFinalMolar: math.Unit = math.divide(numer, denom) as math.Unit
+  const concLimitingFinalMolar: math.Unit = math.divide(numer, denom) as math.Unit
 
-  const concABFinalMolar: math.Unit = math.subtract(concABInitialMolar, concAFinalMolar) as math.Unit
+  const concABFinalMolar: math.Unit = math.subtract(
+    concABInitialMolar,
+    concLimitingFinalMolar,
+  ) as math.Unit
 
-  const concBFinalMolar: math.Unit = math.add(concExcessInitialMolar, concAFinalMolar) as math.Unit
+  const concExcessFinalMolar: math.Unit = math.add(
+    concExcessInitialMolar,
+    concLimitingFinalMolar,
+  ) as math.Unit
 
-  const fractionPossibleAB: number = math.divide(concABFinalMolar, concABInitialMolar) as unknown as number
+  const fractionPossibleAB: number = (math.divide(
+    concABFinalMolar,
+    concABInitialMolar,
+  ) as unknown) as number
 
   const concAllParticles: math.Unit = math
-    .chain(concABFinalMolar).add(concAFinalMolar).add(concBFinalMolar).done()
-  const fractionParticlesAB: number = math.divide(concABFinalMolar, concAllParticles) as unknown as number
-  const fractionParticlesA: number = math.divide(concAFinalMolar, concAllParticles) as unknown as number
-  const fractionParticlesB: number = math.divide(concBFinalMolar, concAllParticles) as unknown as number
+    .chain(concABFinalMolar)
+    .add(concLimitingFinalMolar)
+    .add(concExcessFinalMolar)
+    .done()
+  const fractionParticlesAB: number = (math.divide(
+    concABFinalMolar,
+    concAllParticles,
+  ) as unknown) as number
+  const fractionParticlesLimiting: number = (math.divide(
+    concLimitingFinalMolar,
+    concAllParticles,
+  ) as unknown) as number
+  const fractionParticlesExcess: number = (math.divide(
+    concExcessFinalMolar,
+    concAllParticles,
+  ) as unknown) as number
 
   return {
     percentPossibleAB: fractionPossibleAB * 100,
     percentParticlesAB: fractionParticlesAB * 100,
-    percentParticlesA: fractionParticlesA * 100,
-    percentParticlesB: fractionParticlesB * 100,
+    percentParticlesLimiting: fractionParticlesLimiting * 100,
+    percentParticlesExcess: fractionParticlesExcess * 100,
   }
 }
