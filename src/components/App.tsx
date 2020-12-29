@@ -98,8 +98,8 @@ interface TableRow {
 }
 
 function compute(s: State) {
-  const mwUnitA = math.unit(`${s.mwA} ${mwUnitOptions[s.mwUnitIndexA].value}`)
-  const mwUnitB = math.unit(`${s.mwB} ${mwUnitOptions[s.mwUnitIndexB].value}`)
+  const mwUnitA = math.unit(`${parseFloat(s.mwA)} ${mwUnitOptions[s.mwUnitIndexA].value}`)
+  const mwUnitB = math.unit(`${parseFloat(s.mwB)} ${mwUnitOptions[s.mwUnitIndexB].value}`)
   const [mwExcess, mwLimiting, partsExcess, partsLimiting] =
     s.partsA > s.partsB
       ? [mwUnitA, mwUnitB, s.partsA, s.partsB]
@@ -107,9 +107,9 @@ function compute(s: State) {
   return computeEquilibrium({
     mwExcessComponent: mwExcess,
     mwLimitingComponent: mwLimiting,
-    KD: math.unit(`${s.kD} ${kDUnitOptions[s.kDUnitIndex].value}`),
+    KD: math.unit(`${parseFloat(s.kD)} ${kDUnitOptions[s.kDUnitIndex].value}`),
     foldExcess: parseFloat(partsExcess) / parseFloat(partsLimiting),
-    multipleTotalConcWV: s.concentrations.map((e) => math.unit(`${e} mg/mL`)),
+    multipleTotalConcWV: s.concentrations.map((e) => math.unit(`${parseFloat(e)} mg/mL`)),
   }).map(({percentParticlesExcess, percentParticlesLimiting, ...o}) => {
     const [A, B] =
       s.partsA > s.partsB
@@ -120,17 +120,26 @@ function compute(s: State) {
 }
 
 function formatPercent(value: number) {
-  return (
-    value.toLocaleString(undefined, {
-      maximumFractionDigits: 0,
-    }) + " %"
-  )
+  return isNaN(value)
+    ? "-- %"
+    : value.toLocaleString(undefined, {
+        maximumFractionDigits: 0,
+      }) + " %"
 }
 
 function App() {
   const [state, dispatchStateReducer] = useReducer(stateReducer, initialState)
 
-  const output = compute(state)
+  let output = state.concentrations.map(() => ({
+    percentPossibleAB: NaN,
+    percentParticlesAB: NaN,
+    percentParticlesA: NaN,
+    percentParticlesB: NaN,
+  }))
+
+  try {
+    output = compute(state)
+  } catch (e) {}
 
   const tableRows = state.concentrations.map(
     (c, i): TableRow => {
@@ -153,7 +162,7 @@ function App() {
         </Col>
       </Row>
       <Row>
-        <Col xl={6} className="mt-2">
+        <Col md={3} className="mt-2">
           <Card>
             <Card.Body>
               <Card.Title className="text-center">AB ⇌ A + B</Card.Title>
@@ -231,7 +240,7 @@ function App() {
             </Card.Body>
           </Card>
         </Col>
-        <Col xl={6} className="mt-2">
+        <Col md={9} className="mt-2">
           <Card>
             <Card.Body>
               <BootstrapTable

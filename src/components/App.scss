@@ -7,3 +7,19 @@
     width: 165px;
   }
 }
+
+@media (min-width: map-get($grid-breakpoints, "lg")) {
+  .input-label {
+    text-align: inherit !important;
+    flex: inherit;
+    width: 100%;
+  }
+}
+
+@media (min-width: map-get($grid-breakpoints, "xl")) {
+  .input-label {
+    text-align: right !important;
+    flex: 0 0 165px;
+    width: 165px;
+  }
+}

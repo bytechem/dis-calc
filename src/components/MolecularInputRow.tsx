@@ -32,7 +32,7 @@ const MolecularInputRow: FC<MolecularInputRowProps> = ({
 
   return (
     <Form.Row className="mb-1">
-      <Form.Label column xs={12} className="input-label">
+      <Form.Label column xs={12} md={12} className="input-label">
         {title}
       </Form.Label>
       <Col>
